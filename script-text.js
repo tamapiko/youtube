@@ -6,9 +6,8 @@ const channelBId = 'UCHiu0WbHj7wdyaPSIEKLuYQ';  // タマピコチャンネル�
 
 // チャンネル名を設定
 const channelAName = 'スク解';
-const channelBName = 'タマピコチャンネル';
+const channelBName = 'タマピコ';
 
-// ページロード時にデータを取得し、一定間隔で更新
 document.addEventListener('DOMContentLoaded', () => {
     updateChannelData();
     setInterval(updateChannelData, 1000); // 1秒ごとに更新
@@ -21,22 +20,20 @@ async function updateChannelData() {
 
     let resultHTML = '';
     if (subscribersA !== null && subscribersB !== null) {
-        resultHTML += `
-            『${channelAName}』\n${subscribersA}人\n\n
-            『${channelBName}』\n${subscribersB}人\n\n
-        `;
+        resultHTML += `『${channelAName}』\n${subscribersA}人\n\n`;
+        resultHTML += `『${channelBName}』\n${subscribersB}人\n\n`;
         
         const diff = Math.abs(subscribersA - subscribersB);
 
         if (subscribersA > subscribersB) {
-            resultHTML += `結果\n『${channelAName}』の登録者数が『${channelBName}』より${diff}人多いです。\n「${channelAName}」の方が人気があるようです！`;
+            resultHTML += `『分析結果』\n『${channelAName}』の登録者数が『${channelBName}』より${diff}人多いです。`;
         } else if (subscribersA < subscribersB) {
-            resultHTML += `結果\n『${channelBName}』の登録者数が『${channelAName}』より${diff}人多いです。\n「${channelBName}」の方が人気があるようです！`;
+            resultHTML += `『分析結果』\n『${channelBName}』の登録者数が『${channelAName}』より${diff}人多いです。`;
         } else {
-            resultHTML += `結果\n両方のチャンネルの登録者数は同じです。0人差です。\n人気が拮抗しています！`;
+            resultHTML += `『分析結果』\n同じチャンネル登録者数です。`;
         }
     } else {
-        resultHTML = `1つまたは両方のチャンネルのデータ取得に失敗しました。`;
+        resultHTML = `チャンネルデータの取得に失敗しました。`;
     }
 
     resultDiv.innerText = resultHTML;
