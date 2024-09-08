@@ -21,21 +21,11 @@ body {
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #f9f9f9;
+    white-space: pre-wrap; /* 改行を反映させる */
+    line-height: 1.6; /* 行間を少し広くして見やすくする */
 }
 
 .channel-info {
-    display: flex;
-    align-items: center;
     margin-bottom: 20px;
-}
-
-.channel-info img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
-.channel-info div {
     font-size: 18px;
 }
