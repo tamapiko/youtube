@@ -1,4 +1,4 @@
-const API_KEY = 'YOUR_API_KEY_HERE';  // ここにYouTube Data APIのAPIキーを入力
+const API_KEY = 'AIzaSyCP3uRQEPmUjnoQt2wbZKeHHChKvDTPOpo';  // 提供されたYouTube Data APIキー
 
 // チャンネルIDを設定（「スク解」と「タマピコチャンネル」）
 const channelAId = 'UC76hHFZxOpcHs77FXAKXJyw';  // スク解のチャンネルID
