@@ -7,15 +7,11 @@ const channelBName = 'タマピコ';
 let notificationInterval;
 
 document.getElementById('startBtn').addEventListener('click', function() {
-    if (Notification.permission === 'granted') {
-        startNotifications();
-    } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                startNotifications();
-            }
-        });
-    }
+    requestNotificationPermission().then(permission => {
+        if (permission === 'granted') {
+            startNotifications();
+        }
+    });
 });
 
 document.getElementById('stopBtn').addEventListener('click', function() {
@@ -25,6 +21,23 @@ document.getElementById('stopBtn').addEventListener('click', function() {
 document.getElementById('testNotificationBtn').addEventListener('click', function() {
     testNotification();
 });
+
+function requestNotificationPermission() {
+    return new Promise((resolve, reject) => {
+        if (!("Notification" in window)) {
+            alert("このブラウザは通知をサポートしていません。");
+            reject('unsupported');
+        } else if (Notification.permission === 'granted') {
+            resolve('granted');
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(permission => {
+                resolve(permission);
+            });
+        } else {
+            reject('denied');
+        }
+    });
+}
 
 function startNotifications() {
     document.getElementById('status').innerText = '通知を開始しました。';
@@ -95,11 +108,15 @@ async function getChannelData(channelId) {
 }
 
 function testNotification() {
-    document.getElementById('status').innerText = '10秒後にテスト通知を送信します...';
-    setTimeout(() => {
-        new Notification('テスト通知', {
-            body: 'これはテスト通知です。'
-        });
-        document.getElementById('status').innerText = 'テスト通知が送信されました。';
-    }, 10000);
+    requestNotificationPermission().then(permission => {
+        if (permission === 'granted') {
+            document.getElementById('status').innerText = '10秒後にテスト通知を送信します...';
+            setTimeout(() => {
+                new Notification('テスト通知', {
+                    body: 'これはテスト通知です。'
+                });
+                document.getElementById('status').innerText = 'テスト通知が送信されました。';
+            }, 10000);
+        }
+    });
 }
