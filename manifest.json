@@ -3,7 +3,7 @@
   "short_name": "スクタマ分析",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/",
+  "start_url": "/youtube/",
   "icons": [
     {
       "src": "../appicon192.png",
