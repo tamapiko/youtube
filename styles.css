@@ -1,77 +1,45 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
     margin: 0;
     padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    text-align: center;
+    color: #333;
 }
 
-.settings, .status {
-    margin: 20px 0;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.settings h2, .status h2 {
-    margin-top: 0;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-table, th, td {
-    border: 1px solid #ddd;
-}
-
-th, td {
-    padding: 12px;
-    text-align: center;
-}
-
-th {
-    background-color: #f8f8f8;
-}
-
-.channel-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.channel-info i {
-    margin-right: 8px;
-    color: #FF0000;  /* YouTubeのブランドカラー */
-}
-
-#status {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 16px;
-}
-
-.buttons {
-    text-align: center;
-    margin: 20px 0;
+h2 {
+    color: #666;
 }
 
 button {
-    padding: 10px 20px;
-    margin: 0 10px;
-    border: none;
-    background-color: #007BFF;
+    padding: 10px 15px;
+    margin: 10px 0;
+    background-color: #4A90E2;
     color: white;
-    cursor: pointer;
-    font-size: 16px;
+    border: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #357ABD;
+}
+
+.result {
+    margin-top: 20px;
+    font-size: 1.2em;
+    background-color: #eef;
+    padding: 10px;
+    border-radius: 5px;
 }
