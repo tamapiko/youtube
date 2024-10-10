@@ -14,10 +14,8 @@ function setupNotification() {
         Notification.requestPermission().then(function(permission) {
             if (permission === 'granted') {
                 console.log('通知が許可されました。');
-                document.getElementById('status').innerText = '通知が許可されました。';
             } else {
                 console.log('通知が拒否されました。');
-                document.getElementById('status').innerText = '通知が拒否されました。';
             }
         });
     });
@@ -25,7 +23,7 @@ function setupNotification() {
     document.getElementById('testNotificationBtn').addEventListener('click', function() {
         setTimeout(() => {
             showNotification('テスト通知', 'これはスクタマ分析のテスト通知です。');
-        }, 10000); // 10秒後に通知を表示
+        }, 5000); // 5秒後に通知を表示
     });
 }
 
