@@ -3,39 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTubeチャンネル通知</title>
+    <title>スクタマ分析</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="manifest" href="/manifest.json">
 </head>
 <body>
-    <h1>YouTubeチャンネルの登録者数通知</h1>
-
-    <div class="settings">
-        <h2>通知設定</h2>
-        <button id="testNotificationBtn">テスト通知</button>
-        <div class="buttons">
-            <button id="startBtn">通知を開始</button>
-            <button id="stopBtn">通知を停止</button>
+    <div class="container">
+        <h1>スクタマ分析</h1>
+        <div class="settings">
+            <h2>通知設定</h2>
+            <button id="subscribeBtn">通知を許可する</button>
+            <button id="testNotificationBtn">テスト通知</button>
+        </div>
+        <div class="result" id="result">
+            <!-- 結果がここに表示されます -->
         </div>
     </div>
-
-    <div class="status">
-        <h2>チャンネルの状況</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>チャンネル名</th>
-                    <th>登録者数</th>
-                    <th>最後の更新時間</th>
-                </tr>
-            </thead>
-            <tbody id="channelData">
-                <!-- チャンネルデータがここに表示されます -->
-            </tbody>
-        </table>
-        <div id="status"></div>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
