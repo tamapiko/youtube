@@ -1,122 +1,81 @@
-const API_KEY = 'AIzaSyCP3uRQEPmUjnoQt2wbZKeHHChKvDTPOpo';  // 提供されたYouTube Data APIキー
+const API_KEY = 'AIzaSyCP3uRQEPmUjnoQt2wbZKeHHChKvDTPOpo';  // YouTube Data APIキー
 const channelAId = 'UC76hHFZxOpcHs77FXAKXJyw';  // スク解のチャンネルID
 const channelBId = 'UCHiu0WbHj7wdyaPSIEKLuYQ';  // タマピコチャンネルのチャンネルID
-const channelAName = 'スク解';
-const channelBName = 'タマピコ';
 
-let notificationInterval;
-
-document.getElementById('startBtn').addEventListener('click', function() {
-    requestNotificationPermission().then(permission => {
-        if (permission === 'granted') {
-            startNotifications();
-        }
-    });
-});
-
-document.getElementById('stopBtn').addEventListener('click', function() {
-    stopNotifications();
-});
-
-document.getElementById('testNotificationBtn').addEventListener('click', function() {
-    testNotification();
-});
-
-function requestNotificationPermission() {
-    return new Promise((resolve, reject) => {
-        if (!("Notification" in window)) {
-            alert("このブラウザは通知をサポートしていません。");
-            reject('unsupported');
-        } else if (Notification.permission === 'granted') {
-            resolve('granted');
-        } else if (Notification.permission !== 'denied') {
-            Notification.requestPermission().then(permission => {
-                resolve(permission);
-            });
-        } else {
-            reject('denied');
-        }
-    });
-}
-
-function startNotifications() {
-    document.getElementById('status').innerText = '通知を開始しました。';
+document.addEventListener('DOMContentLoaded', () => {
     updateChannelData();
-    notificationInterval = setInterval(checkTimeAndNotify, 60000); // 1分ごとに時間をチェック
+    setInterval(updateChannelData, 3600000); // 1時間ごとに更新
+    setupNotification();
+});
+
+// 通知のセットアップ
+function setupNotification() {
+    document.getElementById('subscribeBtn').addEventListener('click', function() {
+        Notification.requestPermission().then(function(permission) {
+            if (permission === 'granted') {
+                console.log('通知が許可されました。');
+                document.getElementById('status').innerText = '通知が許可されました。';
+            } else {
+                console.log('通知が拒否されました。');
+                document.getElementById('status').innerText = '通知が拒否されました。';
+            }
+        });
+    });
+
+    document.getElementById('testNotificationBtn').addEventListener('click', function() {
+        setTimeout(() => {
+            showNotification('テスト通知', 'これはスクタマ分析のテスト通知です。');
+        }, 10000); // 10秒後に通知を表示
+    });
 }
 
-function stopNotifications() {
-    clearInterval(notificationInterval);
-    document.getElementById('status').innerText = '通知を停止しました。';
-}
-
-async function checkTimeAndNotify() {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-
-    // 06:00, 12:00, 18:00, 21:00に通知を送信
-    if ((hours === 6 && minutes === 0) || 
-        (hours === 12 && minutes === 0) || 
-        (hours === 18 && minutes === 0) || 
-        (hours === 21 && minutes === 0)) {
-        updateChannelData();
+// 通知を表示
+function showNotification(title, body) {
+    if (Notification.permission === 'granted') {
+        new Notification(title, {
+            body: body,
+            icon: 'icon.png'
+        });
     }
 }
 
+// YouTubeチャンネルデータの更新
 async function updateChannelData() {
+    const resultDiv = document.getElementById('result');
     const [subscribersA] = await getChannelData(channelAId);
     const [subscribersB] = await getChannelData(channelBId);
-    const lastUpdated = new Date().toLocaleTimeString();
 
+    let resultHTML = '';
     if (subscribersA !== null && subscribersB !== null) {
-        const channelData = document.getElementById('channelData');
-        channelData.innerHTML = `
-            <tr>
-                <td class="channel-info"><i class="fab fa-youtube"></i>${channelAName}</td>
-                <td>${subscribersA}人</td>
-                <td>${lastUpdated}</td>
-            </tr>
-            <tr>
-                <td class="channel-info"><i class="fab fa-youtube"></i>${channelBName}</td>
-                <td>${subscribersB}人</td>
-                <td>${lastUpdated}</td>
-            </tr>
-        `;
+        resultHTML += `『スク解』\n${subscribersA}人\n\n`;
+        resultHTML += `『タマピコ』\n${subscribersB}人\n\n`;
 
-        // 通知を表示
-        const notificationText = `『${channelAName}』: ${subscribersA}人\n『${channelBName}』: ${subscribersB}人`;
-        new Notification('YouTubeチャンネルの登録者数', {
-            body: notificationText
-        });
+        const diff = Math.abs(subscribersA - subscribersB);
+
+        if (subscribersA > subscribersB) {
+            resultHTML += `『分析結果』\n『スク解』の登録者数が『タマピコ』より${diff}人多いです。`;
+        } else if (subscribersA < subscribersB) {
+            resultHTML += `『分析結果』\n『タマピコ』の登録者数が『スク解』より${diff}人多いです。`;
+        } else {
+            resultHTML += `『分析結果』\n同じチャンネル登録者数です。`;
+        }
     } else {
-        console.error('チャンネルデータの取得に失敗しました。');
+        resultHTML = `チャンネルデータの取得に失敗しました。`;
     }
+
+    resultDiv.innerText = resultHTML;
 }
 
+// チャンネルデータを取得
 async function getChannelData(channelId) {
     try {
         const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${API_KEY}`);
         const data = await response.json();
         const item = data.items[0];
-        const subscriberCount = parseInt(item.statistics.subscriberCount, 10).toLocaleString();
-        return [subscriberCount];
+        const subscriberCount = item.statistics.subscriberCount;
+        return [parseInt(subscriberCount, 10)];
     } catch (error) {
         console.error(`チャンネル ${channelId} のデータ取得エラー:`, error);
         return [null];
     }
-}
-
-function testNotification() {
-    requestNotificationPermission().then(permission => {
-        if (permission === 'granted') {
-            document.getElementById('status').innerText = '10秒後にテスト通知を送信します...';
-            setTimeout(() => {
-                new Notification('テスト通知', {
-                    body: 'これはテスト通知です。'
-                });
-                document.getElementById('status').innerText = 'テスト通知が送信されました。';
-            }, 10000);
-        }
-    });
 }
