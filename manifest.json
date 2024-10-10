@@ -1,0 +1,17 @@
+{
+  "name": "スクタマ分析",
+  "short_name": "スクタマ分析",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/index.html",
+  "icons": [
+    {
+      "src": "../appicon192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "background_color": "#FFFFFF",
+  "theme_color": "#4A90E2",
+  "description": "スクタマ分析は簡単で便利なYouTubeチャンネル分析アプリです。"
+}
