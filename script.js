@@ -36,10 +36,9 @@ function setupNotification() {
         });
     });
 
+    // テスト通知をすぐ送信
     document.getElementById('testNotificationBtn').addEventListener('click', function() {
-        setTimeout(() => {
-            showNotification('スクタマ分析', 'スクタマ分析のお時間です (テスト)');
-        }, 5000);
+        showNotification('スクタマ分析', 'スクタマ分析のお時間です (テスト)');
     });
 }
 
