@@ -1,71 +1,76 @@
-const API_KEY = 'AIzaSyCP3uRQEPmUjnoQt2wbZKeHHChKvDTPOpo';  // YouTube Data APIキー
-const channelAId = 'UC76hHFZxOpcHs77FXAKXJyw';  // スク解のチャンネルID
-const channelBId = 'UCHiu0WbHj7wdyaPSIEKLuYQ';  // タマピコチャンネルのチャンネルID
+const API_KEY = 'AIzaSyCP3uRQEPmUjnoQt2wbZKeHHChKvDTPOpo';
+const channelAId = 'UC76hHFZxOpcHs77FXAKXJyw';  
+const channelBId = 'UCHiu0WbHj7wdyaPSIEKLuYQ';
 const channelAName = 'スク解';
 const channelBName = 'タマピコ';
+const notificationTimes = ['06:00', '12:00', '18:00', '21:00'];
 
 document.addEventListener('DOMContentLoaded', () => {
     updateChannelData();
-    setInterval(updateChannelData, 3600000); // 1時間ごとに更新
     setupNotification();
-    registerServiceWorker(); // Service Workerを登録
+    registerServiceWorker();
+
+    setInterval(checkTimeForNotification, 60000);
 });
 
-// Service Workerの登録
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker.js')
         .then(function(registration) {
-            console.log('Service Worker 登録成功:', registration);
+            console.log('Service Worker registered:', registration);
         })
         .catch(function(error) {
-            console.error('Service Worker 登録失敗:', error);
+            console.error('Service Worker registration failed:', error);
         });
     }
 }
 
-// 通知のセットアップ
 function setupNotification() {
     document.getElementById('subscribeBtn').addEventListener('click', function() {
         Notification.requestPermission().then(function(permission) {
             if (permission === 'granted') {
-                console.log('通知が許可されました。');
+                console.log('Notifications granted.');
             } else {
-                console.log('通知が拒否されました。');
+                console.log('Notifications denied.');
             }
         });
     });
 
     document.getElementById('testNotificationBtn').addEventListener('click', function() {
         setTimeout(() => {
-            showNotification('スクタマ分析', 'スクタマ分析のお時間です (テスト)'); // 5秒後に「(テスト)」を追加して通知
-        }, 5000); // 5秒後に通知を表示
+            showNotification('スクタマ分析', 'スクタマ分析のお時間です (テスト)');
+        }, 5000);
     });
 }
 
-// 通知を表示
 function showNotification(title, body) {
     if (Notification.permission === 'granted') {
-        navigator.serviceWorker.ready.then(function(registration) {
-            registration.showNotification(title, {
-                body: body,
-                icon: 'icon.png'
-            });
+        fetch('./push', {
+            method: 'POST',
+            body: JSON.stringify({ title: title, body: body }),
+            headers: { 'Content-Type': 'application/json' }
         });
     }
 }
 
-// YouTubeチャンネルデータの更新
+function checkTimeForNotification() {
+    const currentTime = new Date();
+    const currentHours = String(currentTime.getHours()).padStart(2, '0');
+    const currentMinutes = String(currentTime.getMinutes()).padStart(2, '0');
+    const formattedTime = `${currentHours}:${currentMinutes}`;
+
+    if (notificationTimes.includes(formattedTime)) {
+        showNotification('スクタマ分析', 'スクタマ分析のお時間です');
+    }
+}
+
+// チャンネルデータ更新
 async function updateChannelData() {
     const resultDiv = document.getElementById('result');
     const analysis = await generateAnalysis();
     resultDiv.innerText = analysis;
-
-    // 通知も送信
-    showNotification('スクタマ分析', 'スクタマ分析のお時間です');
 }
 
-// 分析結果を生成
 async function generateAnalysis() {
     const [subscribersA] = await getChannelData(channelAId);
     const [subscribersB] = await getChannelData(channelBId);
@@ -80,7 +85,7 @@ async function generateAnalysis() {
         if (subscribersA > subscribersB) {
             resultHTML += `『分析結果』\n『${channelAName}』の登録者数が『${channelBName}』より${diff}人多いです。`;
         } else if (subscribersA < subscribersB) {
-            resultHTML += `『分析結果』\n『${channelBName}』の登録者数が『${channelAName}』より${diff}人多いです。`;
+            resultHTML += `『${channelBName}』の登録者数が『${channelAName}』より${diff}人多いです。`;
         } else {
             resultHTML += `『分析結果』\n同じチャンネル登録者数です。`;
         }
@@ -91,7 +96,6 @@ async function generateAnalysis() {
     return resultHTML;
 }
 
-// チャンネルデータを取得
 async function getChannelData(channelId) {
     try {
         const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${API_KEY}`);
